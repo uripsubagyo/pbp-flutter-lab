@@ -144,3 +144,43 @@
     
 
 Akhir sebagi penutup. Ubah title pada main.dart menjadi `Program Counter`
+
+
+
+
+# TUGAS 8
+
+## Navigator.push vs Navigator.pushReplacement
+
+- Navigator.push :
+
+    Berfungsi menambahkan route baru ke stack navigasi
+- Navigator.pushReplacement : 
+    
+    Bergungsi untuk mengganti route yang ada di stack navigasi ke route baru 
+
+## Widget
+- Scaffold 
+    ```bash
+    Scaffold adalah widget utama flutter untuk mengkonstruksi widget lainnya.
+    ```
+- Row 
+    ```bash
+    Row adalah widget yang berisikan list untuk mengatur secara horizontal.
+    ```
+- Container : 
+    ```bash
+    Container adalah widget yang menampung berbagai widget, atribut, dan lain-lain.
+    ```
+- Text
+    ```bash
+    Text merupakan widget yang menampilkan text dan dapat di style sesuai keinginan.
+    ```
+
+
+## Jenis Event Pada Flutter
+
+- `onChanged` : Event yang tejadi ketika widget diubah.
+- `onPressed` : Event yang melakukan action ketika widget di tekan.
+- `onSaved` : Event yang melakukan action ketika widget disimpan.
+- `onTap` : Event yang melakukan action ketika widget ditap.
