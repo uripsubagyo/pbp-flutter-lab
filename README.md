@@ -168,6 +168,10 @@ Akhir sebagi penutup. Ubah title pada main.dart menjadi `Program Counter`
     ```bash
     Row adalah widget yang berisikan list untuk mengatur secara horizontal.
     ```
+- Column 
+    ```bash
+    Column adalah widget yang berisikan list untuk mengatur secara vertikal.
+    ```
 - Container : 
     ```bash
     Container adalah widget yang menampung berbagai widget, atribut, dan lain-lain.
@@ -176,6 +180,26 @@ Akhir sebagi penutup. Ubah title pada main.dart menjadi `Program Counter`
     ```bash
     Text merupakan widget yang menampilkan text dan dapat di style sesuai keinginan.
     ```
+- Drawer
+    ```bash
+    Merupakan widget untuk membuat side navbar pada flutter
+    ```
+- TextFormField
+    ```bash
+    Widget ini digunakan untuk membuat text form pada flutter
+    ```
+- Spacer
+    ```bash
+    Merupakan widget yang digunakan untuk memerikan efek space beetwen antar dua widget lainnya
+    ```
+- Form
+    ```bash
+    Merupakan widget untuk membuat form
+    ```
+- MaterialPageRoute
+    ```bash
+    Widget yang digunakan untuk merefresh dan berpindah lokasi atau halaman.
+    ``` 
 
 
 ## Jenis Event Pada Flutter
@@ -184,3 +208,133 @@ Akhir sebagi penutup. Ubah title pada main.dart menjadi `Program Counter`
 - `onPressed` : Event yang melakukan action ketika widget di tekan.
 - `onSaved` : Event yang melakukan action ketika widget disimpan.
 - `onTap` : Event yang melakukan action ketika widget ditap.
+
+
+## Implementasi Checklist
+- Pertama yaitu membuat file `Budget.dart` sebagai class setiap budget yang akan ditambahkan dengan form. Isi bagian file tersebut dengan kode dibawah ini
+    ```bash
+        import 'package:flutter/material.dart';
+
+        class Budget{
+        String judul;
+        int nominal;
+        String type;
+        String timeNow;
+
+        Budget(this.judul, this.nominal, this.type, this.timeNow);
+        }
+    ```
+
+- Kemudian buat drawer external file dengan nama file `drawe.dart`. Isi file tersebut dengan `Widget build(BuildContext context)` kode dibawah ini.
+
+    ```bash
+        Widget build(BuildContext context) {
+        return Drawer(
+          child: Column(
+            children: [
+              ListTile(
+                title: const Text('counter_7'),
+                onTap: () {
+                  // Route menu ke halaman utama
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>  MyHomePage(title: "Counter 7", data: widget.data,)),
+                  );
+                },
+              ),
+
+              ListTile(
+                title: const Text('Tambah Budget'),
+                onTap: () {
+                  // Route menu ke halaman form
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => TambahBudget(data: widget.data)),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text('Data Budget'),
+                onTap: () {
+                  // Route menu ke halaman Data
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => DataPage(data: widget.data)),
+                  );
+                },
+              ),
+            ],
+          ),
+        );}
+    ```
+
+- kemudian setelah membuat drawer, tambahkan drawer pada `MyHomepage` dengan kode dibawah ini.
+
+    ```bash
+        appBar: AppBar(
+            // Here we take the value from the MyHomePage object that was created by
+            // the App.build method, and use it to set our appbar title.
+            title: Text(widget.title),
+        ),
+        drawer: HomeDrawer(data: widget.data == null ? [] : widget.data),  
+        body: ......
+    ```
+
+- kemudian buat file bernama `data.dart` untuk menampilkan data dan `tambahdata.dart` sebagai page untuk mengisi form.
+
+- Isi `tambahdata.dart` seperti yang telah diajarkan pada tutorial
+
+- Isi `data.dart` dengan kode dibawah ini
+
+    ```bash
+        List<Widget> mywidgets = [];
+        for(var i = 0; i < widget.data.length; i++){
+            mywidgets.add(Card(
+            child: Container(
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), boxShadow: [
+                BoxShadow(
+                // offset: Offset(0, 4),
+                color: Color(0xFFF9D276), //edited
+                spreadRadius: 1,
+                blurRadius: 10 
+                )
+            ] 
+                ),
+                margin: EdgeInsets.only(right: 8,top: 8),
+                padding: EdgeInsets.all(30),
+                child: Column(
+                children: [
+                    Row(children: [Text(widget.data[i].judul.toString(),
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                    ),Spacer(), Text(widget.data[i].timeNow.toString(),)],),
+                    Row(children: [Text(widget.data[i].nominal.toString(),style: TextStyle(fontWeight: FontWeight.bold)),Spacer(), Text(widget.data[i].type.toString())],)
+                ],
+                ),
+            )
+            )
+        );
+        }
+    ``` 
+    
+    dan tambahkan pemanggilan pada container sebagai berikut
+
+    ```bash
+        Scarfold(
+            .....
+            Container(
+                child: Column(children: mywidgets),
+            )
+        )
+    ```
+
+- Agar dapat mengambil date realtime maka harus menambahkan kode sebagai berikut pada file `pubspec.yml`.
+    ```bash
+        dependencies:
+        ....
+        ....
+        intl: ^0.17.0       --> this
+    ```
+
+    Jika sudah melakuakn diatas, kamu bisa menggunakan `DateTime.now()`
+
+

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class Budget{
   String judul;
-  String nominal;
+  int nominal;
   String type;
+  String timeNow;
 
-  Budget(this.judul, this.nominal, this.type);
+  Budget(this.judul, this.nominal, this.type, this.timeNow);
 }

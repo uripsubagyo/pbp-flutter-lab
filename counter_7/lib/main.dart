@@ -1,7 +1,9 @@
 import 'package:counter_7/pages/data.dart';
+import 'package:counter_7/pages/drawe.dart';
 import 'package:counter_7/pages/tambahBudget.dart';
 import 'package:flutter/material.dart';
-
+import 'package:counter_7/pages/drawe.dart';
+import 'package:counter_7/pages/Budget.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -17,13 +19,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Program Counter'),
+      home: MyHomePage(title: 'Program Counter'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  var data;
+   MyHomePage({Key? key, required this.title, this.data}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -90,43 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      drawer: Drawer(
-      child: Column(
-        children: [
-          // Menambahkan clickable menu
-          ListTile(
-            title: const Text('counter_7'),
-            onTap: () {
-              // Route menu ke halaman utama
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MyHomePage(title: 'title',)),
-              );
-            },
-          ),
-          ListTile(
-            title: const Text('Tambah Budget'),
-            onTap: () {
-              // Route menu ke halaman form
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const TambahBudget()),
-              );
-            },
-          ),
-          ListTile(
-            title: const Text('Data Budget'),
-            onTap: () {
-              // Route menu ke halaman form
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const Data()),
-              );
-            },
-          ),
-        ],
-      ),
-    ),
+      drawer: HomeDrawer(data: widget.data == null ? [] : widget.data),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
