@@ -338,3 +338,18 @@ Akhir sebagi penutup. Ubah title pada main.dart menjadi `Program Counter`
     Jika sudah melakuakn diatas, kamu bisa menggunakan `DateTime.now()`
 
 
+
+# TUGAS 9
+## Data JSON tanpa model?
+Jawabannya adalah bisa. Akan tetapi dalam pengolahan data akan menjadi ribet pada pengolahan data karena mengolahnya secara manual. Dengan begitu akan lebih baik jika menggunakan model dalam pengambilan data JSON dari respons web service.  
+
+## Widget yang digunakan
+
+## Mekanisme pengambilan data
+1.	Mengaktifkan pengaksesan internet pada flutter
+2.	Membuat model kustom sesuai dengan struktur JSON (dapat menggunakan [Quictype](https://app.quicktype.io/))
+3.	Mengambil data JSON dengan metode http.get
+4.	Mengelolah JSON menggunakan model yang telah dibuat sebelumnya untuk mengubah stuktur data JSON menjadi structural model.
+5.	Menampilkan data dari web service telah diproses pada model ke widget.
+
+## Cara Impementasi
