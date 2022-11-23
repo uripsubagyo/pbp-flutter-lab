@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:counter_7/main.dart';
 import 'package:counter_7/pages/data.dart';
 import 'package:counter_7/pages/tambahBudget.dart';
+import 'package:counter_7/pages/watchlist.dart';
 
 class HomeDrawer extends StatefulWidget {
     List<Budget> data;
@@ -47,6 +48,16 @@ class _HomeDrawer extends State<HomeDrawer> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => DataPage(data: widget.data)),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text('My Watch List'),
+                onTap: () {
+                  // Route menu ke halaman Data
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyWatchList(data: widget.data)),
                   );
                 },
               ),
