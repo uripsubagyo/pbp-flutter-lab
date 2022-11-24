@@ -344,6 +344,9 @@ Akhir sebagi penutup. Ubah title pada main.dart menjadi `Program Counter`
 Jawabannya adalah bisa. Akan tetapi dalam pengolahan data akan menjadi ribet pada pengolahan data karena mengolahnya secara manual. Dengan begitu akan lebih baik jika menggunakan model dalam pengambilan data JSON dari respons web service.  
 
 ## Widget yang digunakan
+- `CircularProgressIndicator`: Digunakan untuk menampilkan loading ketika aplikasi sedang menunggu fetch data.
+- `FutureBuilder` : Berfungsi untuk melakuakn update child berasarkn hasil future yang diberikan
+- `ListView` : untuk membuat data list statis atau data list yang tidak terlalu panjang
 
 ## Mekanisme pengambilan data
 1.	Mengaktifkan pengaksesan internet pada flutter
@@ -353,3 +356,306 @@ Jawabannya adalah bisa. Akan tetapi dalam pengolahan data akan menjadi ribet pad
 5.	Menampilkan data dari web service telah diproses pada model ke widget.
 
 ## Cara Impementasi
+1. Menambahkan Model sesuai dengan file json yang akan di fetch. Kode sebagai berikut:
+    ```bash
+    import 'dart:convert';
+
+    List<WatchList> watchListFromJson(String str) => List<WatchList>.from(json.decode(str).map((x) => WatchList.fromJson(x)));
+
+    String watchListToJson(List<WatchList> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+    class WatchList {
+        WatchList({
+            required this.model,
+            required this.pk,
+            required this.fields,
+        });
+
+        Model model;
+        int pk;
+        Fields fields;
+
+        factory WatchList.fromJson(Map<String, dynamic> json) => WatchList(
+            model: modelValues.map[json["model"]]!,
+            pk: json["pk"],
+            fields: Fields.fromJson(json["fields"]),
+        );
+
+        Map<String, dynamic> toJson() => {
+            "model": modelValues.reverse[model],
+            "pk": pk,
+            "fields": fields.toJson(),
+        };
+    }
+
+    class Fields {
+        Fields({
+            required this.watched,
+            required this.title,
+            required this.rating,
+            required this.releaseDate,
+            required this.review,
+        });
+
+        String watched;
+        String title;
+        int rating;
+        String releaseDate;
+        String review;
+
+        factory Fields.fromJson(Map<String, dynamic> json) => Fields(
+            watched: json["watched"],
+            title: json["title"],
+            rating: json["rating"],
+            releaseDate: json["release_date"],
+            review: json["review"],
+        );
+
+        Map<String, dynamic> toJson() => {
+            "watched": watched,
+            "title": title,
+            "rating": rating,
+            "release_date": releaseDate,
+            "review": review,
+        };
+    }
+
+    enum Model { MYWATCHLIST_MYWATCHLIST }
+
+    final modelValues = EnumValues(map:{
+        "mywatchlist.mywatchlist": Model.MYWATCHLIST_MYWATCHLIST
+    });
+
+    class EnumValues<T> {
+        Map<String, T> map;
+        Map<T, String>? reverseMap;
+
+        EnumValues({required this.map});
+
+        Map<T, String> get reverse {
+            if (reverseMap == null) {
+                reverseMap = map.map((k, v) => new MapEntry(v, k));
+            }
+            return reverseMap!;
+        }
+    }
+
+    ```
+
+2. Menambahkan halaman untuk menampilkan semua data list dan halaman untuk detail page.
+
+    Kode untuk menampilkan page watchlist:
+
+    ```bash
+         
+            import 'package:counter_7/pages/detailWatch.dart';
+            import 'package:counter_7/pages/drawe.dart';
+            import 'package:flutter/material.dart';
+            import 'package:http/http.dart' as http;
+            import 'dart:convert';
+            import 'package:counter_7/model/mywatchlist.dart';
+
+
+            class MyWatchList extends StatefulWidget {
+                var data;
+                MyWatchList({Key? key, required this.data}) : super(key: key);
+
+                @override
+                _MyWatchListPage createState() => _MyWatchListPage();
+            }
+
+            class _MyWatchListPage extends State<MyWatchList> {
+
+            @override
+            Widget build(BuildContext context) {
+                return Scaffold(
+                appBar: AppBar(
+                    title: const Text('My Watch List'),
+                ),
+                drawer: HomeDrawer(data: widget.data),
+                body: FutureBuilder(
+                    future: fetchWatchList(),
+                    builder: (context, AsyncSnapshot snapshot) {
+                        if (snapshot.data == null) {
+                        return const Center(child: CircularProgressIndicator());
+                        } else {
+                        if (!snapshot.hasData) {
+                            return Column(
+                            children: const [
+                                Text(
+                                "Tidak ada data My Watch List",
+                                style: TextStyle(
+                                    color: Color(0xff59A5D8),
+                                    fontSize: 20),
+                                ),
+                                SizedBox(height: 8),
+                            ],
+                            );
+                        } else {
+                            return ListView.builder(
+                                itemCount: snapshot.data!.length,
+                                itemBuilder: (_, index) => GestureDetector(
+                                            onTap: () {
+                                            Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => DetailWatch(myWatch: snapshot.data![index], data: widget.data)));
+                                            }, 
+                                child: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 12),
+                                        padding: const EdgeInsets.all(20.0),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 1,
+                                                color: Colors.blue),
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(15.0)),
+                                        child: Row(children: [
+
+                                            Text("${snapshot.data![index].fields.title}",style: const TextStyle(
+                                                    fontSize: 18.0,
+                                                    fontWeight: FontWeight.bold,
+                                                ),
+                                            ),
+                                        ]),
+                            )));
+                        }
+                        }
+                    }
+                )
+            );
+            }
+
+            }
+    ```
+    
+    Tambahkan potongan kode dibawah ini untuk membuat halaman detail.
+
+    ```bash
+        import 'package:counter_7/model/mywatchlist.dart';
+        import 'package:counter_7/pages/drawe.dart';
+        import 'package:counter_7/pages/watchlist.dart';
+        import 'package:flutter/material.dart';
+
+
+        class DetailWatch extends StatefulWidget {
+        DetailWatch({super.key, required this.myWatch, required this.data});
+
+        final WatchList myWatch;
+        var data;
+
+        @override
+        State<DetailWatch> createState() => _DetailWatch();
+        }
+
+        class _DetailWatch extends State<DetailWatch> {
+
+        @override
+        Widget build(BuildContext context) {
+            return Scaffold(
+            appBar: AppBar(title: Text("Detail Your Watch")),
+            drawer: HomeDrawer(data: widget.data),
+            body: Container(
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                    SizedBox(height: 20,),
+                    Text("${widget.myWatch.fields.title}",style: const TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                    )),
+                    SizedBox(height: 20,),
+                    Row(children: [
+                        Text("Release Date : ", style: const TextStyle(
+                    
+                    fontWeight: FontWeight.bold,
+                    )),
+                        Text("${widget.myWatch.fields.releaseDate}")
+                    ],),
+                    SizedBox(height: 5,),
+                    Row(children: [
+                        Text("Rating : ", style: const TextStyle(
+                    
+                    fontWeight: FontWeight.bold,
+                    )),
+                        Text("${widget.myWatch.fields.rating}/5")
+                    ],),
+                    SizedBox(height: 5,),
+                    Row(children: [
+                        Text("Status : ", style: const TextStyle(
+                    
+                    fontWeight: FontWeight.bold,
+                    )),
+                        Text(widget.myWatch.fields.watched == true? "Sudah ditonton" : "Belum ditonton")
+                    ],),
+                    SizedBox(height: 5,),
+                    Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                        Text("Review", style: const TextStyle(
+                    
+                    fontWeight: FontWeight.bold,
+                    )),
+                                SizedBox(height: 5,),
+                        Text("${widget.myWatch.fields.review}")
+                    ],
+                    ),
+                    Spacer(),
+                    Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                        TextButton(onPressed: (){
+                            Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => MyWatchList(data: widget.data)));
+                                        
+                        }, child: SizedBox(
+                        height: 30,
+                        width: 250,
+                        child:Text("Back", style: TextStyle(color:Colors.white),)),
+                        style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue))
+                        )
+                        
+                    ],
+                    ),
+                    SizedBox(height: 10,)
+                ],
+                )
+            ),
+
+            );
+        }
+        }
+    ```
+
+    Tambahkan potongan kode fetch data sebagai beikur dibawah line kode `class _MyWatchListPage extends State<MyWatchList> {`.
+
+    ```bash
+        Future<List<WatchList>> fetchWatchList() async {
+        var url = Uri.parse('https://pbp-tugas-urip.herokuapp.com/mywatchlist/json/');
+        var response = await http.get(
+        url,
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+        },
+        );
+
+        // melakukan decode response menjadi bentuk json
+        var data = jsonDecode(utf8.decode(response.bodyBytes));
+        // melakukan konversi data json menjadi object ToDo
+        List<WatchList> mywatch = [];
+        for (var d in data) {
+        if (d != null) {
+            mywatch.add(WatchList.fromJson(d));
+        }
+        }
+        return mywatch;
+        }
+    ```
+
+3. Menambahkan navigasi My Watch list agar dapat terintergrasi.

@@ -1,3 +1,4 @@
+import 'package:counter_7/pages/detailWatch.dart';
 import 'package:counter_7/pages/drawe.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -33,13 +34,11 @@ class _MyWatchListPage extends State<MyWatchList> {
             mywatch.add(WatchList.fromJson(d));
         }
         }
-        print("PASSSSS");
         return mywatch;
   }
 
   @override
   Widget build(BuildContext context) {
-    print(fetchWatchList());
     return Scaffold(
     appBar: AppBar(
         title: const Text('My Watch List'),
@@ -66,36 +65,32 @@ class _MyWatchListPage extends State<MyWatchList> {
             } else {
                 return ListView.builder(
                     itemCount: snapshot.data!.length,
-                    itemBuilder: (_, index)=> Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    padding: const EdgeInsets.all(20.0),
-                    decoration: BoxDecoration(
-                        color:Colors.white,
-                        borderRadius: BorderRadius.circular(15.0),
-                        boxShadow: const [
-                        BoxShadow(
-                            color: Colors.black,
-                            blurRadius: 2.0
-                        )
-                        ]
-                    ),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                        Text(
-                            "${snapshot.data![index].fileds.title}",
-                            style: const TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                            ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text("${snapshot.data![index].fields.title}"),
-                        ],
-                    ),
-                    )
-                );
+                    itemBuilder: (_, index) => GestureDetector(
+                                onTap: () {
+                                  Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DetailWatch(myWatch: snapshot.data![index], data: widget.data)));
+                                }, 
+                      child: Container(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              padding: const EdgeInsets.all(20.0),
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1,
+                                      color: Colors.blue),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15.0)),
+                              child: Row(children: [
+
+                                Text("${snapshot.data![index].fields.title}",style: const TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                  ),
+                              ]),
+                )));
             }
             }
         }
